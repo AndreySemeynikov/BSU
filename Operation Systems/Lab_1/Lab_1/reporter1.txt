@@ -1,0 +1,4 @@
+Report on file creator1.txt
+1 andrey 5 25
+3 kate 7 35
+2 sasha 6 30

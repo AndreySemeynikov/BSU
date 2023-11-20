@@ -1,0 +1,3 @@
+﻿  Lab_2.cpp
+E:\Repository_for_GIT\BSU\Operation Systems\Lab_2\Lab_2\Lab_2.cpp(12,15): warning C4244: '+=': conversion from 'double' to '__int64', possible loss of data
+  Lab_2.vcxproj -> E:\Repository_for_GIT\BSU\Operation Systems\Lab_2\x64\Debug\Lab_2.exe

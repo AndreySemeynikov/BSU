@@ -1,149 +1,168 @@
-#include <iostream>
-#include "windows.h"
+#include "Lab_3.h"
 
-int* sharedArray;
-int arraySize;
-HANDLE* stopEvents;
-HANDLE* continueEvents;
-int numThreads;
-bool* threadWorking;
-CRITICAL_SECTION criticalSection;
 
-void resetEvents(HANDLE* events) {
-    for (int i = 0; i < numThreads; i++) {
-        ResetEvent(events[i]);
+void set_zeros(int* arr, int size, int thread_index) {
+    for (int i = 0; i < size; ++i) {
+        if (arr[i] == thread_index) { arr[i] = 0; }
     }
 }
 
-void displayArray() {
-    for (int i = 0; i < arraySize; i++) {
-        std::cout << "Element " << i + 1 << ": " << sharedArray[i] << "\n";
-    }
+bool need_to_terminate(HANDLE* terminate_or_continue) {
+    return WaitForSingleObject(terminate_or_continue[0], 0) == WAIT_OBJECT_0;
 }
 
-DWORD WINAPI markerThread(LPVOID param) {
-    auto threadNumber = (int)param;
-    int markedElements = 0;
-    srand(threadNumber);
-    bool* visitedElements = new bool[arraySize] {};
+void continue_thread(HANDLE* terminate_or_continue) {
+    ResetEvent(terminate_or_continue[1]);
+}
 
-    while (true) {
-        markedElements = 0;
+DWORD WINAPI thread_func(LPVOID params) {
+    thread_info info = *((thread_info*)params);
+    bool end_thread = false;
+    int number_of_marked_elements = 0;
+    srand(info.thread_index);
 
-        while (true) {
-            int randomIndex = rand() % arraySize;
+    WaitForSingleObject(info.start_work, INFINITE);
 
-            if (sharedArray[randomIndex] != 0) {
-                EnterCriticalSection(&criticalSection);
-                std::cout << "Thread " << threadNumber + 1 << " is stopping. Marked elements: " << markedElements << ". It breaks on element " << randomIndex + 1 << "\n";
-                SetEvent(stopEvents[threadNumber]);
-                LeaveCriticalSection(&criticalSection);
-                break;
-            }
-
-            EnterCriticalSection(&criticalSection);
-            if (sharedArray[randomIndex] == 0) {
-                Sleep(5);
-                sharedArray[randomIndex] = threadNumber + 1;
-                markedElements++;
-                visitedElements[randomIndex] = true;
-                Sleep(5);
-            }
-            LeaveCriticalSection(&criticalSection);
+    while (!end_thread) {
+        int ind = rand() % info.array_size;
+        EnterCriticalSection(&cs);
+        if (info.arr[ind] == 0) {
+            Sleep(5);
+            info.arr[ind] = info.thread_index;
+            LeaveCriticalSection(&cs);
+            number_of_marked_elements++;
+            Sleep(5);
         }
-
-        WaitForSingleObject(continueEvents[threadNumber], INFINITE);
-        ResetEvent(continueEvents[threadNumber]);
-
-        if (!threadWorking[threadNumber]) {
-            EnterCriticalSection(&criticalSection);
-            std::cout << "Thread " << threadNumber + 1 << " is closing\n";
-
-            for (int i = 0; i < arraySize; i++) {
-                if (visitedElements[i]) {
-                    sharedArray[i] = 0;
-                }
+        else {
+            std::cout << "\nThread " << info.thread_index << ", number of marked elements: " << number_of_marked_elements << ", can't mark element with index " << ind;
+            LeaveCriticalSection(&cs);
+            SetEvent(info.stop_work);
+            //waiting for main response
+            int k = WaitForMultipleObjects(2, info.terminate_or_continue, FALSE, INFINITE) - WAIT_OBJECT_0;
+            if (k == 0) {
+                end_thread = true;
             }
-
-            SetEvent(stopEvents[threadNumber]);
-            LeaveCriticalSection(&criticalSection);
-            return 0;
         }
     }
+    set_zeros(info.arr, info.array_size, info.thread_index);
+    return 0;
 }
+
+void print_array(int* arr, int size) {
+    std::cout << "Array: ";
+    for (int i = 0; i < size; ++i) {
+        std::cout << arr[i] << " ";
+    }
+    std::cout << "\n";
+}
+
+bool all_threads_terminated(bool* terminated_threads, int size) {
+    for (int i = 0; i < size; ++i) {
+        if (terminated_threads[i] == false) {
+            return false;
+        }
+    }
+    return true;
+}
+
+void initialize_array(int* arr, int size) {
+    for (int i = 0; i < size; ++i) {
+        arr[i] = 0;
+    }
+}
+
 
 int main() {
-    std::cout << "Enter the number of elements in the array: ";
-    std::cin >> arraySize;
+    InitializeCriticalSection(&cs);
 
-    sharedArray = new int[arraySize]();
-    std::cout << "Enter the number of threads: ";
-    std::cin >> numThreads;
+    int size;
+    std::cout << "Enter array size: ";
+    std::cin >> size;
+    int* arr = new int[size];
+    initialize_array(arr, size);
 
-    HANDLE* threads = new HANDLE[numThreads];
-    stopEvents = new HANDLE[numThreads];
-    continueEvents = new HANDLE[numThreads];
-    threadWorking = new bool[numThreads];
+    int number_of_threads;
+    std::cout << "Enter number marker of threads: ";
+    std::cin >> number_of_threads;
 
-    InitializeCriticalSection(&criticalSection);
+    HANDLE* threads = new HANDLE[number_of_threads];
+    thread_info* information = new thread_info[number_of_threads];
+    bool* terminated_threads = new bool[number_of_threads];
+    HANDLE start_work = CreateEvent(NULL, TRUE, FALSE, NULL);
+    HANDLE* stopped_threads = new HANDLE[number_of_threads];
 
-    for (int i = 0; i < numThreads; i++) {
-        stopEvents[i] = CreateEvent(NULL, TRUE, FALSE, NULL);
-        continueEvents[i] = CreateEvent(NULL, TRUE, FALSE, NULL);
-        threads[i] = CreateThread(NULL, 0, markerThread, (void*)i, 0, NULL);
-        threadWorking[i] = true;
+    for (int i = 0; i < number_of_threads; ++i) {
+        information[i].arr = arr;
+        information[i].array_size = size;
+        information[i].thread_index = i + 1;
+        information[i].start_work = start_work;
+        stopped_threads[i] = information[i].stop_work = CreateEvent(NULL, TRUE, FALSE, NULL);
+        information[i].terminate_or_continue = new HANDLE[2];
+        information[i].terminate_or_continue[0] = CreateEvent(NULL, FALSE, FALSE, NULL);
+        information[i].terminate_or_continue[1] = CreateEvent(NULL, FALSE, FALSE, NULL);
+        threads[i] = CreateThread(NULL, 0, thread_func, (LPVOID)(&information[i]), NULL, NULL);
+        terminated_threads[i] = false;
     }
 
-    for (int i = 0; i < numThreads; i++) {
-        for (int j = 0; j < numThreads; j++) {
-            if (threadWorking[j]) {
-                ResetEvent(stopEvents[j]);
+    SetEvent(start_work);
+
+    int ended_threads = 0;
+
+    while (ended_threads != number_of_threads) {
+        WaitForMultipleObjects(number_of_threads, stopped_threads, TRUE, INFINITE);
+        std::cout << "\n";
+        print_array(arr, size);
+        bool is_thread_terminated = false; //checks if we had stopped thread at this iteration
+        while (!is_thread_terminated) {
+            int thread_to_terminate_ind;
+            std::cout << "Enter index of thread to be terminated(starts with 1): ";
+            std::cin >> thread_to_terminate_ind;
+            thread_to_terminate_ind--;
+            if (thread_to_terminate_ind >= number_of_threads || thread_to_terminate_ind < 0) {
+                std::cout << "No thread with such index\n";
+                continue;
             }
-        }
-
-        WaitForMultipleObjects(numThreads, stopEvents, TRUE, INFINITE);
-
-        int threadToStop;
-        std::cout << "Array:\n";
-        displayArray();
-
-        while (true) {
-            std::cout << "Enter the thread number to stop (1-" << numThreads << "). Already stopped threads: ";
-            for (int j = 0; j < numThreads; j++) {
-                if (!threadWorking[j]) {
-                    std::cout << j + 1 << " ";
-                }
-            }
-            std::cout << "\n";
-            std::cin >> threadToStop;
-            threadToStop--;
-
-            if (threadToStop >= 0 && threadToStop < numThreads && threadWorking[threadToStop]) {
-                threadWorking[threadToStop] = false;
-                ResetEvent(stopEvents[threadToStop]);
-                SetEvent(continueEvents[threadToStop]);
-                WaitForSingleObject(stopEvents[threadToStop], INFINITE);
-                break;
+            if (terminated_threads[thread_to_terminate_ind]) {
+                std::cout << "Thread is already terminated\n";
             }
             else {
-                std::cout << "Incorrect number, try again!\n";
+                SetEvent(information[thread_to_terminate_ind].terminate_or_continue[0]);
+                WaitForSingleObject(threads[thread_to_terminate_ind], INFINITE);
+                print_array(arr, size);
+                terminated_threads[thread_to_terminate_ind] = true;
+                is_thread_terminated = true;
+                ended_threads++;
             }
         }
 
-        for (int j = 0; j < numThreads; j++) {
-            if (threadWorking[j]) {
-                SetEvent(continueEvents[j]);
+        for (int j = 0; j < number_of_threads; ++j) {
+            if (!terminated_threads[j]) {
+                ResetEvent(information[j].stop_work);
+                SetEvent(information[j].terminate_or_continue[1]);
             }
         }
     }
 
-    // Clean up
-    DeleteCriticalSection(&criticalSection);
-    delete[] sharedArray;
+    std::cout << "All threads are terminated\n";
+
+    CloseHandle(start_work);
+    for (int i = 0; i < number_of_threads; ++i) {
+        CloseHandle(threads[i]);
+        CloseHandle(stopped_threads[i]);
+        CloseHandle(information[i].terminate_or_continue[0]);
+        CloseHandle(information[i].terminate_or_continue[1]);
+    }
     delete[] threads;
-    delete[] stopEvents;
-    delete[] continueEvents;
-    delete[] threadWorking;
+    delete[] stopped_threads;
+    for (int i = 0; i < number_of_threads; ++i) {
+        delete[] information[i].terminate_or_continue;
+    }
+    delete[] information;
+    delete[] terminated_threads;
+    delete[] arr;
+
+    DeleteCriticalSection(&cs);
 
     return 0;
 }
+

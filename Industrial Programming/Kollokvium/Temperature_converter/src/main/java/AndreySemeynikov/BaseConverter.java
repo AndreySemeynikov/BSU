@@ -1,4 +1,4 @@
-package org.example;
+package AndreySemeynikov;
 
 import java.util.Locale;
 

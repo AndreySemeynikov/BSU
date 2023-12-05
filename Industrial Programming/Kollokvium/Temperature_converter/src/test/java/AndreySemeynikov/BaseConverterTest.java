@@ -1,4 +1,5 @@
-package org.example;
+package AndreySemeynikov;
+
 
 import org.junit.Before;
 import org.junit.Test;

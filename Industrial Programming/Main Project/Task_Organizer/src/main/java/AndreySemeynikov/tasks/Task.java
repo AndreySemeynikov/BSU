@@ -1,17 +1,46 @@
-package com.AndreySemeynikov.tasks;
+package AndreySemeynikov.tasks;
+
+import jakarta.xml.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Task {
-    private String title;
-    private String description;
-    private LocalDate startDate;
-    private LocalDate dueDate;
-    private TaskStatus status;
-    private List<String> attachedFiles;
+        @XmlElement
+        private String title;
 
-    public Task(String title,String description, LocalDate startDate, LocalDate dueDate, TaskStatus status, List<String> attachedFiles)
+        @XmlElement
+        private String description;
+
+        @XmlElement
+        private LocalDate startDate;
+
+        @XmlElement
+        private LocalDate dueDate;
+
+        @XmlElement
+        private TaskStatus status;
+
+        @XmlElementWrapper(name = "attachedFiles")
+        @XmlElement(name = "file")
+        private List<String> attachedFiles;
+
+    public Task(){
+        this.title = null;
+        this.description = null;
+        this.startDate = null;
+        this.dueDate = null;
+        this.status = null;
+        this.attachedFiles = null;
+    }
+    public Task(String title,
+                String description,
+                LocalDate startDate,
+                LocalDate dueDate,
+                TaskStatus status,
+                List<String> attachedFiles)
     {
         this.title = title;
         this.description = description;

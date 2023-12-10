@@ -1,4 +1,4 @@
-package com.AndreySemeynikov.tasks;
+package AndreySemeynikov.tasks;
 
 public enum TaskStatus {
     ACTIVE("Active"),

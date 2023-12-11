@@ -16,6 +16,7 @@ public class Main {
                 LocalDate.of(2023, 12, 5),
                 LocalDate.of(2023,12, 8),
                 TaskStatus.ACTIVE);
+        task2.setDescription("some information about task");
 
         System.out.println(task2.toString());
         TaskFileManager taskFileManager = new TaskFileManager();

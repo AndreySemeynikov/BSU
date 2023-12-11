@@ -1,7 +1,9 @@
 package AndreySemeynikov.tasks;
 
+import AndreySemeynikov.util.LocalDateAdapterXML;
 import jakarta.xml.bind.annotation.*;
-
+import jakarta.xml.bind.annotation.adapters.XmlAdapter;
+import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -15,9 +17,11 @@ public class Task {
         private String description;
 
         @XmlElement
+        @XmlJavaTypeAdapter(LocalDateAdapterXML.class)
         private LocalDate startDate;
 
         @XmlElement
+        @XmlJavaTypeAdapter(LocalDateAdapterXML.class)
         private LocalDate dueDate;
 
         @XmlElement

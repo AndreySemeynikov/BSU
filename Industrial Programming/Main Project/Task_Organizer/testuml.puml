@@ -1,0 +1,66 @@
+@startuml
+enum AndreySemeynikov.tasks.TaskStatus {
++  ACTIVE
++  COMPLETED
++  OVERDUE
+- String status
++ String toString()
+}
+class AndreySemeynikov.tasks.read_and_write.storage.SaveManager {
+- SaveStrategy saveStrategy
++ void setSaveStrategy(SaveStrategy)
++ void save(Task)
+}
+class AndreySemeynikov.tasks.read_and_write.storage.FileSystemSaveStrategy {
++ void save(Task)
+}
+interface AndreySemeynikov.tasks.read_and_write.storage.SaveStrategy {
+~ void save(Task)
+}
+class AndreySemeynikov.tasks.read_and_write.strategies.JsonTaskSerializer {
+- {static} Gson gson
++ String serializeTask(Task)
++ Task deserializeTask(String)
+}
+class AndreySemeynikov.tasks.read_and_write.TaskFileManager {
+- TaskSerializerStrategy taskSerializerStrategy
++ void saveTaskToFile(Task,String,String)
++ Task loadTaskFromFile(String,String)
+}
+interface AndreySemeynikov.tasks.read_and_write.strategies.TaskSerializerStrategy {
+~ String serializeTask(Task)
+~ Task deserializeTask(String)
+}
+class AndreySemeynikov.tasks.read_and_write.strategies.XMLTaskSerializer {
++ String serializeTask(Task)
++ Task deserializeTask(String)
+}
+class AndreySemeynikov.tasks.Task {
+- String title
+- String description
+- LocalDate startDate
+- LocalDate dueDate
+- TaskStatus status
+- List<String> attachedFiles
++ String getTitle()
++ void setTitle(String)
++ String getDescription()
++ void setDescription(String)
++ LocalDate getStartDate()
++ void setStartDate(LocalDate)
++ LocalDate getDueDate()
++ void setDueDate(LocalDate)
++ TaskStatus getStatus()
++ void setStatus(TaskStatus)
++ List<String> getAttachedFiles()
++ void setAttachedFiles(List<String>)
++ void addAttachedFile(String)
++ void removeAttachedFile(String)
++ String toString()
+}
+
+
+AndreySemeynikov.tasks.read_and_write.storage.SaveStrategy <|.. AndreySemeynikov.tasks.read_and_write.storage.FileSystemSaveStrategy
+AndreySemeynikov.tasks.read_and_write.strategies.TaskSerializerStrategy <|.. AndreySemeynikov.tasks.read_and_write.strategies.JsonTaskSerializer
+AndreySemeynikov.tasks.read_and_write.strategies.TaskSerializerStrategy <|.. AndreySemeynikov.tasks.read_and_write.strategies.XMLTaskSerializer
+@enduml

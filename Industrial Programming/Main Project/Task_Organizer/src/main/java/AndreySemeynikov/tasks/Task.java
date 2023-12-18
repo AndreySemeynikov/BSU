@@ -12,21 +12,16 @@ import java.util.List;
 public class Task {
         @XmlElement
         private String title;
-
         @XmlElement
         private String description;
-
         @XmlElement
         @XmlJavaTypeAdapter(LocalDateAdapterXML.class)
         private LocalDate startDate;
-
         @XmlElement
         @XmlJavaTypeAdapter(LocalDateAdapterXML.class)
         private LocalDate dueDate;
-
         @XmlElement
         private TaskStatus status;
-
         @XmlElementWrapper(name = "attachedFiles")
         @XmlElement(name = "file")
         private List<String> attachedFiles;
@@ -34,6 +29,14 @@ public class Task {
     public Task(){
         this.title = null;
         this.description = null;
+        this.startDate = null;
+        this.dueDate = null;
+        this.status = null;
+        this.attachedFiles = null;
+    }
+    public Task(String title, String description){
+        this.title = title;
+        this.description = description;
         this.startDate = null;
         this.dueDate = null;
         this.status = null;

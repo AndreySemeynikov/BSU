@@ -1,40 +1,4 @@
 package AndreySemeynikov.tasks.read_and_write;
-/*
-package AndreySemeynikov.tasks.read_and_write;
-
-import AndreySemeynikov.tasks.Task;
-import AndreySemeynikov.tasks.read_and_write.strategies.*;
-import jakarta.xml.bind.JAXBException;
-
-import java.io.IOException;
-
-public class TaskFileManager {
-    private FileFormatStrategy fileFormatStrategy;
-    private TaskSerializerStrategy taskSerializerStrategy;
-
-    public TaskFileManager(FileFormatStrategy fileFormatStrategy)
-    {
-        this.fileFormatStrategy = fileFormatStrategy;
-        this.taskSerializerStrategy =
-    }
-
-    public void setFileFormatStrategy(FileFormatStrategy fileFormatStrategy)
-    {
-        this.fileFormatStrategy = fileFormatStrategy;
-    }
-
-    public void saveTaskToFile(Task task, String filePath) throws IOException, JAXBException {
-        String data = taskSerializerStrategy.serializeTask(task);
-        fileFormatStrategy.saveToFile(filePath, data);
-    }
-
-    public Task loadTaskFromFile(String filePath) throws IOException, JAXBException {
-        String data = fileFormatStrategy.loadFromFile(filePath);
-        return TaskSerializerStrategy.deserializeTask(data);
-    }
-}
-*/
-
 
 import AndreySemeynikov.tasks.Task;
 import AndreySemeynikov.tasks.read_and_write.strategies.JsonTaskSerializer;
@@ -42,14 +6,15 @@ import AndreySemeynikov.tasks.read_and_write.strategies.TaskSerializerStrategy;
 import AndreySemeynikov.tasks.read_and_write.strategies.XMLTaskSerializer;
 import jakarta.xml.bind.JAXBException;
 
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 
 public class TaskFileManager {
     private TaskSerializerStrategy taskSerializerStrategy;
-
     public void saveTaskToFile(Task task, String filePath, String format) throws IOException, JAXBException {
         switch(format){
             case "json":
@@ -59,7 +24,7 @@ public class TaskFileManager {
                 this.taskSerializerStrategy = new XMLTaskSerializer();
                 break;
             default:
-                System.out.println("Incorrect format");
+                System.out.println("Incorrect format of file save to");
         }
 
         String data = taskSerializerStrategy.serializeTask(task);
@@ -68,7 +33,6 @@ public class TaskFileManager {
             }
 
     }
-
     public Task loadTaskFromFile(String filePath, String format) throws IOException, JAXBException {
         switch(format){
             case "json":
@@ -78,9 +42,10 @@ public class TaskFileManager {
                 this.taskSerializerStrategy = new XMLTaskSerializer();
                 break;
             default:
-                System.out.println("Incorrect format");
+                System.out.println("Incorrect format of file load from");
         }
             String json = new String(Files.readAllBytes(Paths.get(filePath)));
             return taskSerializerStrategy.deserializeTask(json);
     }
+
 }

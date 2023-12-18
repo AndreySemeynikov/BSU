@@ -6,34 +6,44 @@ import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Task {
+        private static final AtomicLong idGenerator = new AtomicLong(0);
+        @XmlElement
+        private long id;
+
         @XmlElement
         private String title;
-
         @XmlElement
         private String description;
-
         @XmlElement
         @XmlJavaTypeAdapter(LocalDateAdapterXML.class)
         private LocalDate startDate;
-
         @XmlElement
         @XmlJavaTypeAdapter(LocalDateAdapterXML.class)
         private LocalDate dueDate;
-
         @XmlElement
         private TaskStatus status;
-
         @XmlElementWrapper(name = "attachedFiles")
         @XmlElement(name = "file")
         private List<String> attachedFiles;
 
     public Task(){
+        this.id = generateId();
         this.title = null;
         this.description = null;
+        this.startDate = null;
+        this.dueDate = null;
+        this.status = null;
+        this.attachedFiles = null;
+    }
+    public Task(String title, String description){
+        this.id = generateId();
+        this.title = title;
+        this.description = description;
         this.startDate = null;
         this.dueDate = null;
         this.status = null;
@@ -46,6 +56,7 @@ public class Task {
                 TaskStatus status,
                 List<String> attachedFiles)
     {
+        this.id = generateId();
         this.title = title;
         this.description = description;
         this.startDate = startDate;
@@ -55,6 +66,7 @@ public class Task {
     }
     public Task(String title, LocalDate startDate, LocalDate dueDate, TaskStatus status)
     {
+        this.id = generateId();
         this.title = title;
         this.startDate = startDate;
         this.dueDate = dueDate;
@@ -62,12 +74,14 @@ public class Task {
     }
     public Task(String title, LocalDate startDate, LocalDate dueDate)
     {
+        this.id = generateId();
         this.title = title;
         this.startDate = startDate;
         this.dueDate = dueDate;
     }
     public Task(String title)
     {
+        this.id = generateId();
         this.title = title;
     }
     public String getTitle() {
@@ -75,6 +89,7 @@ public class Task {
     }
 
     public void setTitle(String title) {
+        this.id = generateId();
         this.title = title;
     }
 
@@ -83,6 +98,7 @@ public class Task {
     }
 
     public void setDescription(String description) {
+        this.id = generateId();
         this.description = description;
     }
 
@@ -124,15 +140,22 @@ public class Task {
     public void removeAttachedFile(String fileName) {
         attachedFiles.remove(fileName);
     }
+    public long getId() {
+        return id;
+    }
+    public static long generateId() {
+        return idGenerator.getAndIncrement();
+    }
 
     public String toString()
     {
         return "Task{" +
+                "id=" + id +'\''+
                 "title='" + title + '\'' +
                 ", description='" + description + '\'' +
-                ", startDate=" + startDate.toString() +
-                ", dueDate=" + dueDate.toString() +
-                ", status=" + status +
+                ", startDate=" + startDate +  '\'' +
+                ", dueDate=" + dueDate + '\'' +
+                ", status=" + status + '\'' +
                 ", attachedFiles=" + attachedFiles +
                 '}';
     }

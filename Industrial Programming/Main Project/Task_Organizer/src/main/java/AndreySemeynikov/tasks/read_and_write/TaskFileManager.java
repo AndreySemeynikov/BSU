@@ -15,7 +15,7 @@ import java.util.List;
 
 public class TaskFileManager {
     private TaskSerializerStrategy taskSerializerStrategy;
-    public void saveTaskToFile(Task task, String filePath, String format) throws IOException, JAXBException {
+    public void saveTaskToFile(Task task, Path filePath, String format) throws IOException, JAXBException {
         switch(format){
             case "json":
                 this.taskSerializerStrategy = new JsonTaskSerializer();
@@ -29,11 +29,11 @@ public class TaskFileManager {
 
         String data = taskSerializerStrategy.serializeTask(task);
             if (data != null) {
-                Files.write(Paths.get(filePath), data.getBytes());
+                Files.write(filePath, data.getBytes());
             }
 
     }
-    public Task loadTaskFromFile(String filePath, String format) throws IOException, JAXBException {
+    public Task loadTaskFromFile(Path filePath, String format) throws IOException, JAXBException {
         switch(format){
             case "json":
                 this.taskSerializerStrategy = new JsonTaskSerializer();
@@ -44,7 +44,7 @@ public class TaskFileManager {
             default:
                 System.out.println("Incorrect format of file load from");
         }
-            String json = new String(Files.readAllBytes(Paths.get(filePath)));
+            String json = new String(Files.readAllBytes(filePath));
             return taskSerializerStrategy.deserializeTask(json);
     }
 

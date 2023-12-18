@@ -26,7 +26,10 @@ public class Main {
         System.out.println(task2.toString());
 
         Task task1 = taskFileManager.loadTaskFromFile("src/main/resources/files/test1.xml", "xml");
-        List<Task> list_of_tasks = new ArrayList<>();*/
+        List<Task> list_of_tasks = new ArrayList<>();
+
+        src/main/resources/files/User1
+        */
     }
 
 }

@@ -4,37 +4,37 @@ import AndreySemeynikov.tasks.Task;
 import AndreySemeynikov.tasks.read_and_write.TaskFileManager;
 import jakarta.xml.bind.JAXBException;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
 public class ConsoleUI {
+    private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private TaskFileManager taskFileManager;
     private List<Task> taskList = new ArrayList<>();
     public ConsoleUI(TaskFileManager taskFileManager){
         this.taskFileManager = taskFileManager;
     }
     public void start() throws IOException, JAXBException {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
         while(true){
             printMenu();
-            int choice = readUserChoice(reader);
+            int choice = readUserChoice();
 
             switch (choice) {
                 case 1:
-                    addTask(reader);
+                    addTask();
                     break;
                 case 2:
                     displayAllTasks();
                     break;
                 case 3:
-                    saveTasksToFiles(reader); // all tasks are saved to different files in folder from user
+                    saveTasksToFiles(); // all tasks are saved to different files in folder from user
                     break;
                 case 4:
-                    loadTasksFromFiles(reader);
+                    loadTasksFromFiles();
                     break;
                 case 5:
                     System.out.println("Exiting the program. Goodbye!");
@@ -46,29 +46,45 @@ public class ConsoleUI {
         }
     }
 
-    private void loadTasksFromFiles(BufferedReader reader) throws IOException {
-        System.out.print("Enter the filepath to the folder: ");
-        String filepath = reader.readLine();
-        System.out.print("Enter the format of files: ");
+    private void loadTasksFromFiles() throws IOException, JAXBException {
+        Path directoryPath = openDirectory();
+        String fileExtension = chooseFormatOfFile();
+        Path[] files = Files.list(directoryPath).toArray(Path[]::new);
+        if(files.length !=0){
+            for (Path file : files) {
+                if (file.getFileName().toString().endsWith(fileExtension)) {
+                    Path filePath = file.toAbsolutePath();
+
+                    Task task = taskFileManager.loadTaskFromFile(filePath, fileExtension);
+                    taskList.add(task);
+
+                    System.out.println(file.getFileName().toString());
+                }
+            }
+        }
+        else {
+            System.out.println("No such files in this directory");
+        }
     }
 
-    private String openDirectory(BufferedReader reader) throws IOException {
+    private Path openDirectory() throws IOException {
         while (true) {
             System.out.print("Enter the filepath to the directory: ");
             String directoryPath = reader.readLine();
-            File directory = new File(directoryPath);
+            Path directory = Paths.get(directoryPath);
 
-            if (directory.exists() && directory.isDirectory()) {
-                return directoryPath;
+            if (Files.isDirectory(directory)) {
+                return directory;
             } else {
-                System.out.println("The specified directory does not exist or is not a valid directory. Please enter a valid directory path.");
+                System.out.println("The specified directory does not exist or" +
+                        "is not a valid directory. Please enter a valid directory path.");
             }
         }
     }
-    private String chooseFormatOfFile(BufferedReader reader) throws IOException {
+    private String chooseFormatOfFile() throws IOException {
         while (true) {
             printFormatOfFile();
-            int choice = readUserChoice(reader);
+            int choice = readUserChoice();
 
             switch (choice) {
                 case 1:
@@ -81,17 +97,17 @@ public class ConsoleUI {
             }
         }
     }
-    private void saveTasksToFiles(BufferedReader reader) throws IOException, JAXBException {
+    private void saveTasksToFiles() throws IOException, JAXBException {
         if(taskList.isEmpty()){
             System.out.println("No tasks to save");
         } else {
-            String directoryPath = openDirectory(reader); // открывем используя функцию
-            String format = chooseFormatOfFile(reader);
+            Path directoryPath = openDirectory(); // открывем используя функцию
+            String fileExtension = chooseFormatOfFile();
             for (int i = 0; i < taskList.size(); i++) {
                 Task task = taskList.get(i);
                 taskFileManager.saveTaskToFile(task,
-                        directoryPath + "/task" + String.valueOf(i + 1) + "." + format,
-                        format);
+                        Path.of(directoryPath + "/task" + String.valueOf(i + 1) + "." + fileExtension),
+                        fileExtension);
                 }
             }
         }
@@ -103,15 +119,16 @@ public class ConsoleUI {
         } else {
             for (int i = 0; i < taskList.size(); i++) {
                 Task task = taskList.get(i);
-                System.out.println("Task " + (i + 1) + ":");
+                /*System.out.println("Task " + (i + 1) + ":");
                 System.out.println("Title: " + task.getTitle());
                 System.out.println("Description: " + task.getDescription());
                 System.out.println("StartDate: " + task.getStartDate());
                 System.out.println("DueDate: " + task.getDueDate());
                 System.out.println("Status: " + task.getStatus());
-                System.out.println("Attached files: " + task.getAttachedFiles());
+                System.out.println("Attached files: " + task.getAttachedFiles());*/
+                System.out.println("Task " + (i + 1) + ":");
+                System.out.println(task.toString());
 
-                // Выводите остальные свойства задачи, если они есть
                 System.out.println();
             }
         }
@@ -129,7 +146,7 @@ public class ConsoleUI {
         System.out.println("1. XML");
         System.out.println("2. JSON");
     }
-    private int readUserChoice(BufferedReader reader) {
+    private int readUserChoice() {
         try {
             System.out.print("Enter your choice: ");
             return Integer.parseInt(reader.readLine());
@@ -138,18 +155,18 @@ public class ConsoleUI {
             return -1;
         }
     }
-    private void addTask(BufferedReader reader) throws IOException {
+    private void addTask() throws IOException {
         System.out.println("Enter task details:");
-
         System.out.print("Title: ");
-        String title = reader.readLine();
 
+        String title = reader.readLine();
         System.out.print("Description: ");
         String description = reader.readLine();
-
-        // You may include additional logic for reading other task details
-
         Task task = new Task(title, description);
+        taskList.add(task);
+    }
+    private void addTaskFromFile() throws IOException {
+        Task task = new Task();
         taskList.add(task);
     }
 

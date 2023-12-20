@@ -1,6 +1,6 @@
 package AndreySemeynikov.tasks.read_and_write.strategies;
 
-import AndreySemeynikov.tasks.Task;
+import AndreySemeynikov.tasks.Task.Task;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;

@@ -1,6 +1,6 @@
 package AndreySemeynikov.tasks.read_and_write.storage;
 
-import AndreySemeynikov.tasks.Task;
+import AndreySemeynikov.tasks.Task.Task;
 
 public class SaveManager {
     private SaveStrategy saveStrategy;

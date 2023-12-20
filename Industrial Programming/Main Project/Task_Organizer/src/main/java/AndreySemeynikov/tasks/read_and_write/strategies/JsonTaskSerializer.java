@@ -1,6 +1,6 @@
 package AndreySemeynikov.tasks.read_and_write.strategies;
 
-import AndreySemeynikov.tasks.Task;
+import AndreySemeynikov.tasks.Task.Task;
 import AndreySemeynikov.util.LocalDateAdapterJson;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

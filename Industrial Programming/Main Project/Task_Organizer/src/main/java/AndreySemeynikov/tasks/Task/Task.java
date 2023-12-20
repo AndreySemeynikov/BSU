@@ -1,8 +1,7 @@
-package AndreySemeynikov.tasks;
+package AndreySemeynikov.tasks.Task;
 
 import AndreySemeynikov.util.LocalDateAdapterXML;
 import jakarta.xml.bind.annotation.*;
-import jakarta.xml.bind.annotation.adapters.XmlAdapter;
 import jakarta.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.time.LocalDate;
 import java.util.List;
@@ -68,6 +67,15 @@ public class Task {
     {
         this.id = generateId();
         this.title = title;
+        this.startDate = startDate;
+        this.dueDate = dueDate;
+        this.status = status;
+    }
+    public Task(String title, String description, LocalDate startDate, LocalDate dueDate, TaskStatus status)
+    {
+        this.id = generateId();
+        this.title = title;
+        this.description = description;
         this.startDate = startDate;
         this.dueDate = dueDate;
         this.status = status;

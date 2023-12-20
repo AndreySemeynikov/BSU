@@ -1,6 +1,6 @@
 package AndreySemeynikov.tasks.read_and_write.strategies;
 
-import AndreySemeynikov.tasks.Task;
+import AndreySemeynikov.tasks.Task.Task;
 import jakarta.xml.bind.JAXBException;
 
 public interface TaskSerializerStrategy {

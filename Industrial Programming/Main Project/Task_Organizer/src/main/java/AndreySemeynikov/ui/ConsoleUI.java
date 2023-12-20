@@ -1,6 +1,6 @@
 package AndreySemeynikov.ui;
 
-import AndreySemeynikov.tasks.Task;
+import AndreySemeynikov.tasks.Task.Task;
 import AndreySemeynikov.tasks.read_and_write.TaskFileManager;
 import jakarta.xml.bind.JAXBException;
 

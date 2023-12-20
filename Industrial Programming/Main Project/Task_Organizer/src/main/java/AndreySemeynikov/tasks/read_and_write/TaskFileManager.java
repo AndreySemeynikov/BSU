@@ -1,6 +1,6 @@
 package AndreySemeynikov.tasks.read_and_write;
 
-import AndreySemeynikov.tasks.Task;
+import AndreySemeynikov.tasks.Task.Task;
 import AndreySemeynikov.tasks.read_and_write.strategies.JsonTaskSerializer;
 import AndreySemeynikov.tasks.read_and_write.strategies.TaskSerializerStrategy;
 import AndreySemeynikov.tasks.read_and_write.strategies.XMLTaskSerializer;
@@ -9,9 +9,6 @@ import jakarta.xml.bind.JAXBException;
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TaskFileManager {
     private TaskSerializerStrategy taskSerializerStrategy;

@@ -1,15 +1,10 @@
 package AndreySemeynikov;
 
-import AndreySemeynikov.tasks.Task;
-import AndreySemeynikov.tasks.TaskStatus;
 import AndreySemeynikov.tasks.read_and_write.TaskFileManager;
 import AndreySemeynikov.ui.ConsoleUI;
 import jakarta.xml.bind.JAXBException;
 
 import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws IOException, JAXBException {

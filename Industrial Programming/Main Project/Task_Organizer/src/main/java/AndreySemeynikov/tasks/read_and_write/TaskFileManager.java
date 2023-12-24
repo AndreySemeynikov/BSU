@@ -27,6 +27,7 @@ public class TaskFileManager {
         String data = taskSerializerStrategy.serializeTask(task);
             if (data != null) {
                 Files.write(filePath, data.getBytes());
+                System.out.println("Your task " + task.getTitle() + " with id " + task.getId() + " was saved successfully");
             }
 
     }

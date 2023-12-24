@@ -1,16 +1,18 @@
 package AndreySemeynikov;
 
+import AndreySemeynikov.tasks.Task.Task;
 import AndreySemeynikov.tasks.read_and_write.TaskFileManager;
 import AndreySemeynikov.ui.ConsoleUI;
 import jakarta.xml.bind.JAXBException;
 
 import java.io.IOException;
+import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) throws IOException, JAXBException {
         TaskFileManager taskFileManager = new TaskFileManager();
         ConsoleUI consoleUI = new ConsoleUI(taskFileManager);
-        consoleUI.start();
+        consoleUI.startConsole();
 
        /*Task task2 = new Task(
                 "2nd task",
@@ -25,6 +27,8 @@ public class Main {
 
         src/main/resources/files/User1
         */
+
+
     }
 
 }

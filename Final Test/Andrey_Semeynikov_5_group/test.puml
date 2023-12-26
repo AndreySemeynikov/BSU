@@ -1,0 +1,64 @@
+@startuml
+class AndreySemeynikov.parts.Team {
+- String name
+- int points
+- int wins
+- int draws
+- int losses
+- int goalsScored
+- int goalsConceded
+- int gamesPlayed
++ String getName()
++ int getPoints()
++ int getWins()
++ int getDraws()
++ int getLosses()
++ int getGoalsScored()
++ int getGoalsConceded()
++ int getGamesPlayed()
++ void updateStatistics(int,int)
+}
+class AndreySemeynikov.ChampionsLeague {
+- List<Group> groups
++ void processMatches(List<Match>)
+- boolean groupContainsTeam(Group,String)
+}
+class AndreySemeynikov.Readers.MatchReader {
++ {static} List<Match> readMatchesFromFile(String)
+}
+class AndreySemeynikov.parts.Group {
+- String name
+- List<Team> teams
++ void processMatchResult(Match)
+- Team findTeam(String)
++ void printTable(PrintWriter)
++ List<Team> getTeams()
++ String getName()
+}
+class AndreySemeynikov.Writers.ResultsWriter {
++ {static} void writeResultsToFile(List<Group>,String)
++ {static} void printTablesToFile(List<Group>,String)
+}
+interface AndreySemeynikov.InterfBD {
+~ void printTable(PrintWriter)
+}
+class AndreySemeynikov.Main {
++ {static} void main(String[])
+}
+class AndreySemeynikov.parts.Match {
+- String team1
+- String team2
+- int score1
+- int score2
++ String getTeam1()
++ String getTeam2()
++ int getScore1()
++ int getScore2()
+}
+class AndreySemeynikov.Readers.TeamReader {
++ {static} List<Group> readGroupsFromFile(String)
+}
+
+
+AndreySemeynikov.InterfBD <|.. AndreySemeynikov.parts.Group
+@enduml

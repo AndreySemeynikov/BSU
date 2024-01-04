@@ -117,4 +117,25 @@ namespace Unittests
             }
         }
     };
+
+    TEST_CLASS(MinMaxTest)
+    {
+    public:
+        TEST_METHOD(IdentifyMaxMinCorrectly)
+        {
+            // Arrange
+            std::vector<double> arr = { 1, 2, 3, 5, 4 };
+            double expectedMax = 5;
+            double expectedMin = 1;
+
+            // Act
+            double max, min;
+            std::thread min_max(Min_Max, std::cref(arr), std::ref(max), std::ref(min));
+            min_max.join();
+            // Assert
+            Assert::AreEqual(expectedMax, max);
+
+        }
+
+    };
 }

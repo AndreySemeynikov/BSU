@@ -1,6 +1,7 @@
 package AndreySemeynikov;
 
 import AndreySemeynikov.tasks.Task.Task;
+import AndreySemeynikov.tasks.Task.TaskStatus;
 import AndreySemeynikov.tasks.read_and_write.TaskFileManager;
 import AndreySemeynikov.ui.ConsoleUI;
 import jakarta.xml.bind.JAXBException;
@@ -27,8 +28,5 @@ public class Main {
 
         src/main/resources/files/User1
         */
-
-
     }
-
 }

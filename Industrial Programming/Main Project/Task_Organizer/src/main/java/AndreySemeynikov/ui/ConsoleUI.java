@@ -2,6 +2,7 @@ package AndreySemeynikov.ui;
 
 import AndreySemeynikov.tasks.Task.Task;
 import AndreySemeynikov.tasks.Task.TaskStatus;
+import AndreySemeynikov.tasks.encryption.DirectoryFileEncryptor;
 import AndreySemeynikov.tasks.read_and_write.TaskFileManager;
 import jakarta.xml.bind.JAXBException;
 
@@ -29,7 +30,8 @@ public class ConsoleUI {
         System.out.println("2. Display All Tasks");
         System.out.println("3. Save Tasks to File");
         System.out.println("4. Load Tasks from File");
-        System.out.println("5. Exit");
+        System.out.println("5. Encrypt files in directory");
+        System.out.println("6. Exit");
     }
     private void printListOfStatus() {
         System.out.println("1. Active");
@@ -55,6 +57,9 @@ public class ConsoleUI {
                     loadTasksFromDirectory();
                     break;
                 case 5:
+                    EncryptFilesInDirectory();
+                    break;
+                case 6:
                     System.out.println("Exiting the program. Goodbye!");
                     return;
                 default:
@@ -77,17 +82,30 @@ public class ConsoleUI {
         }
     }
     private void loadTasksFromDirectory() throws IOException, JAXBException {
+        DirectoryFileEncryptor fileEncryptor = new DirectoryFileEncryptor();
         Path directoryPath = openDirectory();
         String fileExtension = chooseFormatOfFile();
         Path[] files = Files.list(directoryPath).toArray(Path[]::new);
+
+        boolean encrypted = fileEncryptor.askUserForEncryption();
+        if(encrypted){
+            String decryptionKey = fileEncryptor.askUserForDecryptionKey();
+            // Загружаем ключ для дешифрации
+            fileEncryptor.loadDecryptionKey(decryptionKey);
+        }
         if(files.length !=0){
             for (Path file : files) {
                 if (file.getFileName().toString().endsWith(fileExtension)) {
                     Path filePath = file.toAbsolutePath();
-
-                    Task task = taskFileManager.loadTaskFromFile(filePath, fileExtension);
+                    Task task;
+                    if (encrypted) {
+                        task = taskFileManager.loadTaskFromFile(filePath, fileExtension, fileEncryptor);
+                    }
+                    else {
+                        task = taskFileManager.loadTaskFromFile(filePath, fileExtension);
+                    }
                     taskList.add(task);
-
+                    deleteDuplicate(task);
                     System.out.println(file.getFileName().toString());
                 }
             }
@@ -109,6 +127,28 @@ public class ConsoleUI {
                         fileExtension);
             }
         }
+    }
+    private void EncryptFilesInDirectory() throws IOException {
+        DirectoryFileEncryptor fileEncryptor = new DirectoryFileEncryptor();
+        Path directoryPath = openDirectory();
+        String fileExtension = chooseFormatOfFile();
+
+        Files.list(directoryPath)
+                .filter(file -> file.toString().endsWith("." + fileExtension))
+                .forEach(file -> {
+                    try {
+                        fileEncryptor.encryptFile(file);
+                        System.out.println("File encrypted successfully: " + file.getFileName());
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                });
+
+        // Сохраняем ключ в файл
+        fileEncryptor.saveKeyToFile(directoryPath.resolve("encryptionKey.key"));
+        System.out.println("Encryption key: " + fileEncryptor.getBase64EncodedKey());
+        System.out.println("Encryption key saved successfully.");
+
     }
     private Path openDirectory() throws IOException {
         while (true) {
@@ -229,4 +269,18 @@ public class ConsoleUI {
         taskList.add(task);
         System.out.println("Task was created successfully");
     }
+
+    private void deleteDuplicate(Task task)
+    {
+        long id = task.getId();
+
+        for(int i = 0; i < taskList.size()-1; i++)
+        {
+            if(id == taskList.get(i).getId()){
+                taskList.remove(taskList.size()-1);
+                System.out.println("Task with id = " + id + " was duplicate");
+            }
+        }
+    }
+
 }

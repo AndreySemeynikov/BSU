@@ -18,7 +18,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class ConsoleUI {
+public class ConsoleUI implements UIInteface {
     private BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
     private TaskFileManager taskFileManager;
     private List<Task> taskList = new ArrayList<>();
@@ -68,7 +68,8 @@ public class ConsoleUI {
             }
         }
     }
-    private void displayAllTasks() {
+    @Override
+    public void displayAllTasks() {
         System.out.println("All tasks: ");
         if (taskList.isEmpty()) {
             System.out.println("No tasks available.");
@@ -81,7 +82,8 @@ public class ConsoleUI {
             }
         }
     }
-    private void loadTasksFromDirectory() throws IOException, JAXBException {
+    @Override
+    public void loadTasksFromDirectory() throws IOException, JAXBException {
         DirectoryFileEncryptor fileEncryptor = new DirectoryFileEncryptor();
         Path directoryPath = openDirectory();
         String fileExtension = chooseFormatOfFile();
@@ -114,7 +116,8 @@ public class ConsoleUI {
             System.out.println("No such files in this directory");
         }
     }
-    private void saveTasksToFiles() throws IOException, JAXBException {
+    @Override
+    public void saveTasksToFiles() throws IOException, JAXBException {
         if(taskList.isEmpty()){
             System.out.println("No tasks to save");
         } else {
@@ -128,7 +131,8 @@ public class ConsoleUI {
             }
         }
     }
-    private void EncryptFilesInDirectory() throws IOException {
+    @Override
+    public void EncryptFilesInDirectory() throws IOException {
         DirectoryFileEncryptor fileEncryptor = new DirectoryFileEncryptor();
         Path directoryPath = openDirectory();
         String fileExtension = chooseFormatOfFile();
@@ -150,7 +154,8 @@ public class ConsoleUI {
         System.out.println("Encryption key saved successfully.");
 
     }
-    private Path openDirectory() throws IOException {
+    @Override
+    public Path openDirectory() throws IOException {
         while (true) {
             System.out.print("Enter the filepath to the directory: ");
             String directoryPath = reader.readLine();
@@ -164,7 +169,8 @@ public class ConsoleUI {
             }
         }
     }
-    private String chooseFormatOfFile() throws IOException {
+    @Override
+    public String chooseFormatOfFile() throws IOException {
         while (true) {
             printFormatOfFile();
             int choice = readUserChoice();
@@ -181,7 +187,8 @@ public class ConsoleUI {
         }
     }
 
-    TaskStatus chooseStatusOfTask() throws IOException {
+    @Override
+    public TaskStatus chooseStatusOfTask() throws IOException {
         while (true) {
             printListOfStatus();
             int choice = readUserChoice();
@@ -216,7 +223,8 @@ public class ConsoleUI {
             return -1;
         }
     }
-    private LocalDate inputLocalDate(){
+    @Override
+    public LocalDate inputLocalDate(){
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MM yyyy");
         Scanner scanner = new Scanner(System.in);
         System.out.println("Format: day month year; ");
@@ -245,7 +253,8 @@ public class ConsoleUI {
         }
         return null;
     }
-    private void addTask() throws IOException {
+    @Override
+    public void addTask() throws IOException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter the task fields (if you do not want to enter, leave blank): ");
 
@@ -270,7 +279,8 @@ public class ConsoleUI {
         System.out.println("Task was created successfully");
     }
 
-    private void deleteDuplicate(Task task)
+    @Override
+    public void deleteDuplicate(Task task)
     {
         long id = task.getId();
 

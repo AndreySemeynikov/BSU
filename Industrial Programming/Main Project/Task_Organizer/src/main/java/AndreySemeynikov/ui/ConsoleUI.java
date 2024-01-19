@@ -25,6 +25,15 @@ public class ConsoleUI implements UIInteface {
     public ConsoleUI(TaskFileManager taskFileManager){
         this.taskFileManager = taskFileManager;
     }
+    public List<Task> getTaskList()
+    {
+        return this.taskList;
+    }
+    public void addToTaskList(Task task)
+    {
+        this.taskList.add(task);
+    }
+
     private void printMenu() {
         System.out.println("1. Add Task");
         System.out.println("2. Display All Tasks");

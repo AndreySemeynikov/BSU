@@ -9,9 +9,11 @@ import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
@@ -45,6 +47,7 @@ public class TaskView {
 
     public TaskView(Stage primaryStage) {
         mainLayout = new VBox(10);
+        mainLayout.setStyle("-fx-background-color: lightblue;");
         mainLayout.setPadding(new Insets(10));
         addTaskButton = new Button("Add Task");
         ShowAllTasksButton = new Button("Show all tasks");
@@ -52,30 +55,50 @@ public class TaskView {
         LoadTasksFromDirectroyButton = new Button("Load tasks from directory");
         EncryptFilesInDirectory = new Button("Encrypt files in directory");
 
+        // Добавляем кнопку Exit
+        Button exitButton = new Button("Exit");
+        exitButton.setOnAction(event -> primaryStage.close()); // Закрываем окно при нажатии на Exit
+
         mainLayout.getChildren().addAll(addTaskButton, ShowAllTasksButton,
-                SaveAllTasksButton, LoadTasksFromDirectroyButton, EncryptFilesInDirectory);
+                SaveAllTasksButton, LoadTasksFromDirectroyButton, EncryptFilesInDirectory, exitButton);
     }
 
     public void showMainWindow(Stage primaryStage) {
+        // Создаем основной контейнер
+        VBox root = new VBox(10); // Устанавливаем вертикальный отступ между элементами
+        root.setStyle("-fx-background-color: lightblue;"); // Изменяем цвет фона
+
+        // Добавляем mainLayout в ScrollPane
         ScrollPane scrollPane = new ScrollPane(mainLayout);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
-        Scene mainScene = new Scene(scrollPane, 600, 400);
+
+        // Устанавливаем ScrollPane в качестве корневого элемента
+        root.getChildren().addAll(scrollPane);
+
+        // Создаем сцену с нашим корневым элементом
+        Scene mainScene = new Scene(root, 400, 250);
         primaryStage.setScene(mainScene);
         primaryStage.setTitle("Task Manager");
+
+        // Оставшаяся логика остается неизменной
         taskModel = new TaskModel(this);
         addTaskButton.setOnAction(event -> taskModel.handleAddTaskButton(this));
         ShowAllTasksButton.setOnAction(event -> taskModel.handleShowAllTasksButton(this));
         SaveAllTasksButton.setOnAction(event -> taskModel.handleSaveAllTasksButton(this));
         LoadTasksFromDirectroyButton.setOnAction(event -> taskModel.handleLoadTasksFromDirectroyButton(this));
         EncryptFilesInDirectory.setOnAction(event -> taskModel.handleEncryptFilesInDirectoryButton(this));
+
+        // Изменяем цвет фона сцены
+        mainScene.getRoot().setStyle("-fx-background-color: lightblue;");
+
         primaryStage.show();
     }
+
 
     // Handling the add task button
     public void showAddTaskWindow(TaskModel taskModel) {
         // Создаем второе окно для ввода данных о задаче
-
         Stage addTaskStage = new Stage();
         addTaskStage.initModality(Modality.APPLICATION_MODAL);
         addTaskStage.setTitle("Add Task");
@@ -93,18 +116,23 @@ public class TaskView {
         statusComboBox.getItems().addAll("ACTIVE", "COMPLETED", "OVERDUE");
         statusComboBox.setValue("ACTIVE");
 
-        // Создаем кнопку "Save"
-        saveTaskButton = new Button("Create task");
+        // Создаем кнопку "Create task"
+        saveTaskButton = new Button("Create Task");
+        saveTaskButton.setStyle("-fx-background-color: #4CAF50; -fx-text-fill: white;"); // Зеленый фон, белый текст
         // обработка при нажатии на save
 
         Label outputLabel = new Label();
+        outputLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #ADD8E6;"); // Жирный текст, зеленый цвет
 
-        saveTaskButton.setOnAction(event -> {taskModel.handleCreateTaskButton(this, titleField.getText(),
-                descriptionField.getText(), startDatePicker.getValue(), dueDatePicker.getValue(),
-                TaskStatus.valueOf(statusComboBox.getValue())); });
+        saveTaskButton.setOnAction(event -> {
+            taskModel.handleCreateTaskButton(this, titleField.getText(),
+                    descriptionField.getText(), startDatePicker.getValue(), dueDatePicker.getValue(),
+                    TaskStatus.valueOf(statusComboBox.getValue()));
+        });
 
         VBox addTaskLayout = new VBox(10);
         addTaskLayout.setPadding(new Insets(10));
+        addTaskLayout.setStyle("-fx-background-color: #ECF0F1;"); // Нейтральный фон
         addTaskLayout.getChildren().addAll(
                 new Label("Title:"), titleField,
                 new Label("Description:"), descriptionField,
@@ -128,24 +156,17 @@ public class TaskView {
             outputLabel.setText("Task was created");
 
             Duration duration = Duration.seconds(3);
-            Timeline timeline = new Timeline(new KeyFrame(duration, new EventHandler<ActionEvent>() {
-                @Override
-                public void handle(ActionEvent event) {
-                    // Убираем текст после завершения времени
-                    outputLabel.setText("");
-                }
-            }));
-
-            // Запускаем таймлайн
+            Timeline timeline = new Timeline(new KeyFrame(duration, e -> outputLabel.setText("")));
             timeline.play();
         });
     }
 
+
     // Handling the show all task button
-    public void showAllTasksWindow(TaskModel taskModel){
+    public void showAllTasksWindow(TaskModel taskModel) {
         Stage allTaskStage = new Stage();
         allTaskStage.initModality(Modality.APPLICATION_MODAL);
-        allTaskStage.setTitle("All tasks");
+        allTaskStage.setTitle("All Tasks");
 
         allTaskStage.setMinWidth(400);
         allTaskStage.setMinHeight(300);
@@ -161,13 +182,18 @@ public class TaskView {
                 textArea.appendText(" " + task.toString() + "\n");
             }
         }
-        Button ExitButton = new Button("Exit");
-        ExitButton.setOnAction(event -> allTaskStage.close());
+
+        Button exitButton = new Button("Exit");
+        exitButton.setStyle("-fx-background-color: #d9534f; -fx-text-fill: white;"); // Красный фон, белый текст
+        exitButton.setOnAction(event -> allTaskStage.close());
 
         VBox allTaskLayout = new VBox(10);
         allTaskLayout.setPadding(new Insets(10));
+        allTaskLayout.setStyle("-fx-background-color: #ECF0F1;"); // Спокойный цвет фона
         allTaskLayout.getChildren().addAll(
-                textArea, ExitButton
+                createHeaderLabel("All Tasks"),
+                textArea,
+                exitButton
         );
 
         ScrollPane allTaskScrollPane = new ScrollPane(allTaskLayout);
@@ -181,52 +207,54 @@ public class TaskView {
         allTaskStage.show();
     }
 
-    public void saveAllTasksWindow(TaskModel taskModel){
+    // Создаем метод для создания стилизованной надписи
+    private Label createHeaderLabel(String text) {
+        Label label = new Label(text);
+        label.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+        return label;
+    }
+
+
+
+    public void saveAllTasksWindow(TaskModel taskModel) {
         Stage saveTasksStage = new Stage();
         saveTasksStage.initModality(Modality.APPLICATION_MODAL);
-        saveTasksStage.setTitle("Save all tasks");
+        saveTasksStage.setTitle("Save All Tasks");
 
         saveTasksStage.setMinWidth(400);
         saveTasksStage.setMinHeight(300);
 
-        Label pathLabel = new Label("Path to directory:");
+        Label pathLabel = createHeaderLabel("Path to Directory");
         TextField pathTextField = new TextField();
 
-        Label StatusLabel = new Label();
+        Label statusLabel = new Label();
 
-        Label formatLabel = new Label("Choose the format:");
+        Label formatLabel = createHeaderLabel("Choose the Format");
         ComboBox<String> formatComboBox = new ComboBox<>();
         formatComboBox.getItems().addAll("xml", "json");
         formatComboBox.setValue("xml"); // Устанавливаем значение по умолчанию
 
         Button chooseDirectoryButton = new Button("Select Directory");
+        chooseDirectoryButton.setStyle("-fx-background-color: #3498db; -fx-text-fill: white;"); // Синий фон, белый текст
         chooseDirectoryButton.setOnAction(event -> {
-            // Открываем окно выбора директории
             DirectoryChooser directoryChooser = new DirectoryChooser();
-            directoryChooser.setTitle("Select a directory");
+            directoryChooser.setTitle("Select a Directory");
 
-            // Получаем выбранную директорию
             java.io.File selectedDirectory = directoryChooser.showDialog(saveTasksStage);
 
             if (selectedDirectory != null) {
-                // Устанавливаем выбранный путь в текстовое поле
                 pathTextField.setText(selectedDirectory.getAbsolutePath());
             }
         });
 
         Button executeButton = new Button("Execute");
-
+        executeButton.setStyle("-fx-background-color: #2ecc71; -fx-text-fill: white;"); // Зеленый фон, белый текст
         executeButton.setOnAction(event -> {
-            // Получаем значения из текстового поля и ComboBox
             String path = pathTextField.getText();
             String format = formatComboBox.getValue();
-
-            // Ваш код для выполнения действий с выбранными значениями
             try {
                 taskModel.handleExecuteButton(this, path, format);
-            } catch (JAXBException e) {
-                throw new RuntimeException(e);
-            } catch (IOException e) {
+            } catch (JAXBException | IOException e) {
                 throw new RuntimeException(e);
             }
             System.out.println("Path: " + path);
@@ -234,65 +262,60 @@ public class TaskView {
         });
 
         VBox root = new VBox(10);
-        root.getChildren().addAll(pathTextField, pathLabel, chooseDirectoryButton,
-                formatLabel, formatComboBox, executeButton, StatusLabel);
+        root.setStyle("-fx-background-color: #ECF0F1;"); // Спокойный цвет фона
+        root.getChildren().addAll(
+                pathLabel, pathTextField, chooseDirectoryButton,
+                formatLabel, formatComboBox, executeButton, statusLabel
+        );
 
-        Scene scene = new Scene(root, 300, 250);
+        Scene scene = new Scene(root, 400, 250);
         saveTasksStage.setScene(scene);
         saveTasksStage.show();
 
         taskModel.setOnSuccessListener(event -> {
-            StatusLabel.setText("Tasks were saved");
+            statusLabel.setText("Tasks were saved");
         });
         taskModel.setOnFailureListener(event -> {
-            StatusLabel.setText("No tasks to save");
+            statusLabel.setText("No tasks to save");
         });
     }
 
+
     public void LoadTasksFromDirectoryWindow(TaskModel taskModel) {
         Stage primaryStage = new Stage();
-        primaryStage.setTitle("File Chooser Example");
+        primaryStage.setTitle("Load Tasks From Directory");
 
-        Label pathLabel = new Label("Path to directory:");
+        Label pathLabel = createHeaderLabel("Path to Directory");
         TextField pathTextField = new TextField();
 
-        Label StatusLabel = new Label();
+        Label statusLabel = new Label();
 
         Button chooseDirectoryButton = new Button("Choose Directory");
-
+        chooseDirectoryButton.setStyle("-fx-background-color: #3498db; -fx-text-fill: white;"); // Синий фон, белый текст
         chooseDirectoryButton.setOnAction(event -> {
-            // Открываем окно выбора директории
             DirectoryChooser directoryChooser = new DirectoryChooser();
-            directoryChooser.setTitle("Выберите директорию");
+            directoryChooser.setTitle("Choose a Directory");
 
-            // Получаем выбранную директорию
             java.io.File selectedDirectory = directoryChooser.showDialog(primaryStage);
 
             if (selectedDirectory != null) {
-                // Устанавливаем выбранный путь в текстовое поле
                 pathTextField.setText(selectedDirectory.getAbsolutePath());
             }
         });
 
         ToggleGroup formatToggleGroup = new ToggleGroup();
 
-        RadioButton xmlRadioButton = new RadioButton("XML");
-        xmlRadioButton.setToggleGroup(formatToggleGroup);
-        xmlRadioButton.setSelected(true);
+        RadioButton xmlRadioButton = createRadioButton("XML", true, formatToggleGroup);
+        RadioButton jsonRadioButton = createRadioButton("JSON", false, formatToggleGroup);
 
-        RadioButton jsonRadioButton = new RadioButton("JSON");
-        jsonRadioButton.setToggleGroup(formatToggleGroup);
+        CheckBox encryptedCheckBox = new CheckBox("Files are Encrypted");
 
-        CheckBox encryptedCheckBox = new CheckBox("Файлы зашифрованы");
-
-        Label keyLabel = new Label("Encrypted Key:");
+        Label keyLabel = createHeaderLabel("Encrypted Key");
         TextField keyTextField = new TextField();
 
         Button loadFilesButton = new Button("Load Files");
-
-        // обработка
+        loadFilesButton.setStyle("-fx-background-color: #2ecc71; -fx-text-fill: white;"); // Зеленый фон, белый текст
         loadFilesButton.setOnAction(event -> {
-            // Получаем значения из текстового поля, RadioButton и CheckBox
             String path = pathTextField.getText();
             Path directory = Paths.get(path);
             String format = xmlRadioButton.isSelected() ? "xml" : "json";
@@ -301,28 +324,37 @@ public class TaskView {
 
             try {
                 taskModel.handleloadFilesButton(this, directory, format, encrypted, key);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            } catch (JAXBException e) {
+            } catch (IOException | JAXBException e) {
                 throw new RuntimeException(e);
             }
         });
 
         VBox root = new VBox(10);
-        root.getChildren().addAll(pathLabel, pathTextField, chooseDirectoryButton,xmlRadioButton,
-                jsonRadioButton, encryptedCheckBox, keyLabel, keyTextField, loadFilesButton, StatusLabel);
+        root.setStyle("-fx-background-color: #ECF0F1;"); // Спокойный цвет фона
+        root.getChildren().addAll(
+                pathLabel, pathTextField, chooseDirectoryButton, xmlRadioButton,
+                jsonRadioButton, encryptedCheckBox, keyLabel, keyTextField, loadFilesButton, statusLabel
+        );
 
-        Scene scene = new Scene(root, 300, 300);
+        Scene scene = new Scene(root, 400, 350);
         primaryStage.setScene(scene);
         primaryStage.show();
 
         taskModel.setOnSuccessListener(event -> {
-            StatusLabel.setText("Tasks were uploaded successfully");
+            statusLabel.setText("Tasks were uploaded successfully");
         });
         taskModel.setOnFailureListener(event -> {
-            StatusLabel.setText("Tasks weren't uploaded successfully");
+            statusLabel.setText("Tasks weren't uploaded successfully");
         });
     }
+
+    private RadioButton createRadioButton(String text, boolean isSelected, ToggleGroup toggleGroup) {
+        RadioButton radioButton = new RadioButton(text);
+        radioButton.setSelected(isSelected);
+        radioButton.setToggleGroup(toggleGroup);
+        return radioButton;
+    }
+
 
     public void EncryptFilesInDirectoryWindow(TaskModel taskModel)
     {

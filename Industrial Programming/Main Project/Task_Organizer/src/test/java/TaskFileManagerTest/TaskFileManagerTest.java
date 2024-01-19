@@ -1,11 +1,9 @@
 package TaskFileManagerTest;
 
 import AndreySemeynikov.tasks.Task.Task;
-import AndreySemeynikov.tasks.Task.TaskStatus;
+
 import AndreySemeynikov.tasks.read_and_write.TaskFileManager;
 import jakarta.xml.bind.JAXBException;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -14,7 +12,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
-import java.util.Arrays;
 
 import static AndreySemeynikov.tasks.Task.TaskStatus.ACTIVE;
 import static org.junit.jupiter.api.Assertions.*;

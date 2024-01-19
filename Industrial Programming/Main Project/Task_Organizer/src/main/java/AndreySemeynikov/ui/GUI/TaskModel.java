@@ -18,7 +18,7 @@ public class TaskModel {
     private TaskView taskView;
     private TaskFileManager taskFileManager;
     private List<Task> taskList = new ArrayList<>();
-    private EventHandler<ActionEvent> onSuccessListener;
+    public EventHandler<ActionEvent> onSuccessListener;
     private EventHandler<ActionEvent> onFailureListener;
 
     public TaskModel(TaskFileManager taskFileManager) {
@@ -55,10 +55,7 @@ public class TaskModel {
         Task task = new Task(title, description, startDate, dueDate, status);
         taskList.add(task);
         System.out.println("Task was created");
-//        for(int i=0; i<taskList.size(); i++)
-//        {
-//            System.out.println(taskList.get(i).toString());
-//        }
+
         onSuccessListener.handle(new ActionEvent());
     }
 

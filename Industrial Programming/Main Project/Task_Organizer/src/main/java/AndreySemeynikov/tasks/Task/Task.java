@@ -164,7 +164,6 @@ public class Task {
                 ", startDate=" + startDate +  '\'' +
                 ", dueDate=" + dueDate + '\'' +
                 ", status=" + status + '\'' +
-                ", attachedFiles=" + attachedFiles +
-                '}';
+                "}";
     }
 }

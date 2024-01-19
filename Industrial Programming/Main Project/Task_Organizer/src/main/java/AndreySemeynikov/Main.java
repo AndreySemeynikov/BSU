@@ -1,34 +1,41 @@
 package AndreySemeynikov;
 
-import AndreySemeynikov.tasks.Task.Task;
 import AndreySemeynikov.tasks.read_and_write.TaskFileManager;
 import AndreySemeynikov.ui.ConsoleUI;
+import AndreySemeynikov.ui.GUI.GUI;
 import jakarta.xml.bind.JAXBException;
 
 import java.io.IOException;
 import java.util.Scanner;
 
-public class Main {
+public class Main{
+
     public static void main(String[] args) throws IOException, JAXBException {
-        TaskFileManager taskFileManager = new TaskFileManager();
-        ConsoleUI consoleUI = new ConsoleUI(taskFileManager);
-        consoleUI.startConsole();
-
-       /*Task task2 = new Task(
-                "2nd task",
-                LocalDate.of(2023, 12, 5),
-                LocalDate.of(2023,12, 8),
-                TaskStatus.ACTIVE);
-        task2.setDescription("some information about task");
-        System.out.println(task2.toString());
-
-        Task task1 = taskFileManager.loadTaskFromFile("src/main/resources/files/test1.xml", "xml");
-        List<Task> list_of_tasks = new ArrayList<>();
-
-        src/main/resources/files/User1
-        */
-
-
+        System.out.println("What interface do you want to use?\n1.Console\n2.GUI");
+        int choice = readUserChoice();
+        switch (choice) {
+            case 1:
+                TaskFileManager taskFileManager = new TaskFileManager();
+                ConsoleUI consoleUI = new ConsoleUI(taskFileManager);
+                consoleUI.startConsole();
+                break;
+            case 2:
+                GUI.launch(GUI.class, args);
+                break;
+            default:
+                System.out.println("Invalid choice. Please try again.");
+                break;
+        }
     }
 
+    public static int readUserChoice() {
+        Scanner scanner = new Scanner(System.in);
+        try {
+            System.out.print("Enter your choice: ");
+            return scanner.nextInt();
+        } catch (java.util.InputMismatchException e) {
+            System.out.println("Invalid input. Please enter a valid choice.");
+            return -1;
+        }
+    }
 }

@@ -9,6 +9,8 @@ package com.AndreySemeynikov;
 выполняются.
 5.�Устранить�дублирование�с�помощью�рефакторинга.*/
 
+import java.util.Objects;
+
 public class Dollar {
     Double amount;
 
@@ -18,5 +20,9 @@ public class Dollar {
 
     Dollar times(Double multiplier){
         return new Dollar(amount * multiplier);
+    }
+
+    public boolean equals(Dollar dollar) {
+        return Objects.equals(amount, dollar.amount);
     }
 }

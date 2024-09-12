@@ -13,4 +13,10 @@ class DollarTest {
         product = five.times(3.0);
         assertEquals(15, product.amount);
     }
+
+    @Test
+    void testEquality() {
+        assertTrue(new Dollar(5.0).equals(new Dollar(5.0)));
+        assertFalse(new Dollar(5.0).equals(new Dollar(6.0)));
+    }
 }

@@ -8,13 +8,13 @@ class FrancTest {
     @Test
     void testMultiplication() {
         Franc five = new Franc(5.0);
-        assertEquals(new Franc(10.0), five.times(2.0));
-        assertEquals(new Franc(15.0), five.times(3.0));
+        assertEquals(Money.franc(10), five.times(2.0));
+        assertEquals(Money.franc(15), five.times(3.0));
     }
 
     @Test
     void testEquality() {
-        assertTrue(new Franc(5.0).equals(new Franc(5.0)));
-        assertFalse(new Franc(5.0).equals(new Franc(6.0)));
+        assertTrue(Money.franc(5).equals(Money.franc(5)));
+        assertFalse(Money.franc(5).equals(Money.franc(6)));
     }
 }

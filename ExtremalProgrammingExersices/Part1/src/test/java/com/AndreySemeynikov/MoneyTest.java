@@ -8,13 +8,19 @@ class MoneyTest {
 
     @Test
     void testEquality(){
-        assertTrue(new Dollar(5.0).equals(new Dollar(5.0)));
-        assertFalse(new Dollar(5.0).equals(new Dollar(6.0)));
-        assertTrue(new Franc(5.0).equals(new Franc(5.0)));
-        assertFalse(new Franc(5.0).equals(new Franc(6.0)));
-        assertFalse(new Dollar(5.0).equals(new Franc(5.0)));
-        assertFalse(new Dollar(5.0).equals(new Franc(6.0)));
+        assertTrue(Money.dollar(5).equals(Money.dollar(5)));
+        assertFalse(Money.dollar(5).equals(Money.dollar(6)));
+        assertTrue(Money.franc(5).equals(Money.franc(5)));
+        assertFalse(Money.franc(5).equals(Money.franc(6)));
+        assertFalse(Money.dollar(5).equals(Money.franc(5)));
+        assertFalse(Money.dollar(5).equals(Money.franc(6)));
+    }
 
+    @Test
+    void testMultiplication(){
+        Money five = Money.dollar(5.0);
+        assertEquals(Money.dollar(10.0), five.times(2.0));
+        assertEquals(Money.dollar(15.0), five.times(3.0));
     }
 
 }

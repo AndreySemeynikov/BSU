@@ -1,8 +1,6 @@
 package com.AndreySemeynikov;
 
-import java.util.Objects;
-
-public class Money {
+public class Money implements Expression {
     protected double amount;
     protected String currency;
 
@@ -30,6 +28,10 @@ public class Money {
 
     Money times(double multiplier) {
         return new Money(amount*multiplier, currency);
+    }
+
+    Expression plus(Money adddend){
+        return new Money(amount + adddend.amount, currency);
     }
 }
 

@@ -12,9 +12,18 @@ package com.AndreySemeynikov;
 import java.util.Objects;
 
 public class Dollar {
-    Double amount;
+
+    private Double amount;
 
     public Dollar(Double amount) {
+        this.amount = amount;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
         this.amount = amount;
     }
 
@@ -22,7 +31,12 @@ public class Dollar {
         return new Dollar(amount * multiplier);
     }
 
-    public boolean equals(Dollar dollar) {
+    @Override
+    public boolean equals(Object object) {
+        Dollar dollar = (Dollar) object;
+
         return Objects.equals(amount, dollar.amount);
     }
+
+
 }

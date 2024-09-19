@@ -17,8 +17,8 @@ public class Franc extends Money {
         super(amount, currency);
     }
 
-    Franc times(double multiplier){
-        return Money.franc(amount * multiplier);
+    Money times(double multiplier){
+        return new Franc(amount * multiplier, currency);
     }
 
 

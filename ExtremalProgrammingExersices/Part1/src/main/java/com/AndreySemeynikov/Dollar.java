@@ -17,7 +17,7 @@ public class Dollar extends Money{
         super(amount, currency);
     }
 
-    Dollar times(double multiplier){
-        return Money.dollar(amount * multiplier);
+    Money times(double multiplier){
+        return new Money(multiplier * amount, currency);
     }
 }

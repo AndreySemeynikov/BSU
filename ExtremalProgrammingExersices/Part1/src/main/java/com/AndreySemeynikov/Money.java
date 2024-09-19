@@ -2,7 +2,7 @@ package com.AndreySemeynikov;
 
 import java.util.Objects;
 
-public abstract class Money {
+public class Money {
     protected double amount;
     protected String currency;
 
@@ -10,8 +10,6 @@ public abstract class Money {
         this.amount = amount;
         this.currency = currency;
     }
-
-    abstract Money times(double multiplier);
 
     static Dollar dollar(double amount){
         return new Dollar(amount, "USD");
@@ -27,7 +25,11 @@ public abstract class Money {
     @Override
     public boolean equals(Object object){
         Money money = (Money) object;
-        return Objects.equals(amount, money.amount) && getClass().equals(money.getClass());
+        return amount == money.amount && currency.equals(money.currency);
+    }
+
+    Money times(double multiplier) {
+        return new Money(amount*multiplier, currency);
     }
 }
 

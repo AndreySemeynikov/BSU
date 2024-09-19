@@ -17,9 +17,4 @@ public class Franc extends Money {
         super(amount, currency);
     }
 
-    Money times(double multiplier){
-        return new Franc(amount * multiplier, currency);
-    }
-
-
 }

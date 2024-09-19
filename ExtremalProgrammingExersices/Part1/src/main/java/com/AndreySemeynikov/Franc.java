@@ -13,21 +13,13 @@ import java.util.Objects;
 
 public class Franc extends Money {
 
-
-    public Franc(double amount) {
-        this.amount = amount;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
+    public Franc(double amount, String currency) {
+        super(amount, currency);
     }
 
     Franc times(double multiplier){
-        return new Franc(amount * multiplier);
+        return Money.franc(amount * multiplier);
     }
+
 
 }

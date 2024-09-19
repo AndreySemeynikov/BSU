@@ -13,20 +13,11 @@ import java.util.Objects;
 
 public class Dollar extends Money{
 
-
-    public Dollar(double amount) {
-        this.amount = amount;
-    }
-
-    public double getAmount() {
-        return amount;
-    }
-
-    public void setAmount(double amount) {
-        this.amount = amount;
+    public Dollar(double amount, String currency) {
+        super(amount, currency);
     }
 
     Dollar times(double multiplier){
-        return new Dollar(amount * multiplier);
+        return Money.dollar(amount * multiplier);
     }
 }

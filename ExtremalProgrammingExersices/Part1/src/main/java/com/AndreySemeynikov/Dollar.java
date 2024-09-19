@@ -11,9 +11,8 @@ package com.AndreySemeynikov;
 
 import java.util.Objects;
 
-public class Dollar {
+public class Dollar extends Money{
 
-    private Double amount;
 
     public Dollar(Double amount) {
         this.amount = amount;
@@ -30,13 +29,4 @@ public class Dollar {
     Dollar times(Double multiplier){
         return new Dollar(amount * multiplier);
     }
-
-    @Override
-    public boolean equals(Object object) {
-        Dollar dollar = (Dollar) object;
-
-        return Objects.equals(amount, dollar.amount);
-    }
-
-
 }

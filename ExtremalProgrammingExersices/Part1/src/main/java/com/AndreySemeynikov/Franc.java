@@ -11,9 +11,8 @@ package com.AndreySemeynikov;
 
 import java.util.Objects;
 
-public class Franc {
+public class Franc extends Money {
 
-    private Double amount;
 
     public Franc(Double amount) {
         this.amount = amount;
@@ -30,13 +29,5 @@ public class Franc {
     Franc times(Double multiplier){
         return new Franc(amount * multiplier);
     }
-
-    @Override
-    public boolean equals(Object object) {
-        Franc dollar = (Franc) object;
-
-        return Objects.equals(amount, dollar.amount);
-    }
-
 
 }

@@ -30,9 +30,14 @@ public class Money implements Expression {
         return new Money(amount*multiplier, currency);
     }
 
-    Expression plus(Money adddend){
-        return new Money(amount + adddend.amount, currency);
+    Expression plus(Money addend){
+        return new Sum(this, addend);
     }
+
+    public Money reduce(String to){
+        return this;
+    }
+
 }
 
 // нужно чтобы при создании объекта у него было поел currency
